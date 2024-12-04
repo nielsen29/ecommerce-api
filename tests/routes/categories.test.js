@@ -24,7 +24,17 @@ describe('Category Routes', () => {
 
   describe('POST /api/categories', () => {
     it('should create a new category', async () => {
+      const categoryData = {
+        name: 'Electronics'
+      };
 
+      const response = await request(app)
+        .post('/api/categories')
+        .send(categoryData)
+        .expect(201);
+
+      expect(response.body).toHaveProperty('name', 'Electronics');
+      expect(response.body).toHaveProperty('id');
     });
   });
 
