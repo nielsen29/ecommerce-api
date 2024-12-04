@@ -7,13 +7,13 @@ jest.mock('../../models/product', () => ({
     destroy: jest.fn(),
     belongsTo: jest.fn()  // Mock the association method
   }));
-  
+
   jest.mock('../../models/category', () => ({
     findAll: jest.fn(),
     findByPk: jest.fn(),
     create: jest.fn()
   }));
-  
+
   // Now require the service after the mocks are set up
   const ProductService = require('../../services/productService');
   const Product = require('../../models/product');
@@ -27,17 +27,45 @@ describe('ProductService', () => {
 
     describe('getAllProducts', () => {
         it('should return all products', async () => {
-            
+
+        });
+    });
+
+    describe('getProductById', () => {
+        it('should return a product when product exists', async () => {
+
         });
     });
 
     describe('createProduct', () => {
         it('should create a product when category exists', async () => {
-           
-        });
 
-        it('should throw error when category does not exist', async () => {
-            
         });
     });
-});  
+
+    describe('getProductsByCategory', () => {
+        it('should return products by category', async () => {
+
+        });
+    });
+
+    describe('getProductsByCategories', () => {
+        it('should return products by categories', async () => {
+
+        });
+    });
+
+    describe('updateProduct', () => {
+        it('should update a product', async () => {
+
+        });
+    });
+
+    describe('deleteProduct', () => {
+        it('should delete a product', async () => {
+
+        });
+    });
+
+
+});
