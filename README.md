@@ -47,3 +47,13 @@ Si quieren ver el coverage de las pruebas, pueden ejecutar el siguiente comando:
 ```
 npm run test:coverage
 ```
+
+## Ejecutar mutation testing con stryker
+
+Para ejecutar mutation testing con stryker, deben ejecutar el siguiente comando:
+
+```
+npx stryker run
+```
+
+Eso generará un reporte en el archivo `reports/mutation.html` que pueden abrir con cualquier navegador.
