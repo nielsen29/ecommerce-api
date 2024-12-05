@@ -68,7 +68,7 @@ class ProductService {
         : [];
 
         if (!categoryIds.length) {
-        return res.status(400).json({ error: 'Categories parameter is required' });
+            throw new Error('Categories parameter is required');
         }
 
         const { sort, limit, offset } = options;
