@@ -14,6 +14,19 @@ services:
       npm install &&
       npm start
       "
+  npm_base_code:
+    image: node:latest
+    container_name: proyecto_npm
+    volumes:
+      - ./base_code:/var/www/html
+    ports:
+      - "3001:3000"
+    working_dir: /var/www/html
+    command: >
+      sh -c "
+      npm install &&
+      npm start
+      "
 
 
   mongo_db:
