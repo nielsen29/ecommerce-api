@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  npm:
+    image: node:latest
+    container_name: proyecto_npm
+    volumes:
+      - ./src:/var/www/html
+    ports:
+      - "3000:3000"
+    working_dir: /var/www/html
+    command: >
+      sh -c "
+      npm install &&
+      npm start
+      "
+
+
+  mongo_db:
+    container_name: db_container
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data: { }
