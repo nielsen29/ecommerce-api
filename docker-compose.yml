@@ -16,7 +16,7 @@ services:
       "
   npm_base_code:
     image: node:latest
-    container_name: proyecto_npm
+    container_name: proyecto_npm_base
     volumes:
       - ./base_code:/var/www/html
     ports:
