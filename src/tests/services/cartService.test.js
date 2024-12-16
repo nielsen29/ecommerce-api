@@ -28,11 +28,15 @@ describe('CartService', () => {
 
   describe('createCart', () => {
     it('should create a new cart', async () => {
+
       // Mock del resultado esperado
+      //Arrange
       Cart.create.mockResolvedValue({ id: 1 });
-  
+      
+      //Act
       const result = await CartService.createCart();
   
+      //Assert 
       expect(Cart.create).toHaveBeenCalledTimes(1); // Verificar llamada
       expect(result).toEqual({ id: 1 }); // Verificar resultado
     });
@@ -61,6 +65,7 @@ describe('CartService', () => {
   
       const result = await CartService.addItemToCart(1, 1, 2); // cartId, productId, quantity
   
+      //Assert
       expect(Product.findByPk).toHaveBeenCalledWith(1); // Verificar llamada al modelo
       expect(CartItem.create).toHaveBeenCalledWith({
         cartId: 1,
@@ -73,6 +78,7 @@ describe('CartService', () => {
     });
   
     it('should throw an error when product inventory is insufficient', async () => {
+
     // Arrange
     const mockProduct = {
       id: 1,             // Identificador del producto
@@ -91,9 +97,9 @@ describe('CartService', () => {
 
   describe('getCartItems', () => {
     it('should return cart items with calculated totals', async () => {
+      
       // Mock de items y productos
       // Arrange
-      
       CartItem.findAll.mockResolvedValue([
         {           
           quantity: 3,          
@@ -106,9 +112,11 @@ describe('CartService', () => {
           save: jest.fn().mockResolvedValue(true)
         }
       ]);
-        
+      
+      //Act
       const result = await CartService.getCartItems(1); // cartId
   
+      //Assert
       expect(CartItem.findAll).toHaveBeenCalledWith({ where: { cartId: 1 }, include: Product });
 
       expect(result).toEqual({
@@ -130,7 +138,8 @@ describe('CartService', () => {
 
   describe('updateCartItem', () => {
     it('should update cart item quantity when sufficient inventory', async () => {
-    // Arrange
+    
+      // Arrange
           CartItem.findByPk.mockResolvedValue({
         id: 1, 
         cartId: 1,         // Identificador del carrito
@@ -140,21 +149,27 @@ describe('CartService', () => {
         save: jest.fn().mockResolvedValue(true)
       });
  
+      //Act
       const result = await CartService.updateCartItem(1, 2); // itemId, newQuantity
        
+      //Assert
       expect(result.quantity).toBe(2); // Verificar actualización
     });
   });
 
   describe('removeCartItem', () => {
     it('should remove cart item successfully', async () => {
+
+      //Arrange
       const mockCartItemInstance = {
         destroy: jest.fn().mockResolvedValue(true)
       };
       CartItem.findByPk.mockResolvedValue(mockCartItemInstance);
   
+      //Act
       await CartService.removeCartItem(1); // itemId
-  
+   
+      //Assert 
       expect(CartItem.findByPk).toHaveBeenCalledWith(1);
       expect(mockCartItemInstance.destroy).toHaveBeenCalledTimes(1); // Verificar eliminación
     });
