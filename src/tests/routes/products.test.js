@@ -138,7 +138,6 @@ describe('Product Routes', () => {
     //Se simula la consulta http al endpoint de Consulta de productos por Categoria
     const response = await request(app).get(`/api/products/category/${category.id}`);
 
-
     //Assert
     // se valida el mensaje del estatus y cuerpo de la respuesta
     expect(response.status).toBe(200);
