@@ -40,6 +40,7 @@ describe('Cart Routes', () => {
       name: "Moco de Mono",
       price: 3.60,
       inventory: 3,
+      taxRate: 0.07,
       categoryId: categoria.id
     });
 
@@ -167,9 +168,19 @@ describe('Cart Routes', () => {
 
   describe('GET /api/carts/:cartId/items', () => {
 
-    beforeEach({
+    let cartItems;
+    beforeEach(async () => {
 
-    });
+      //carrito = carrito
+      //console.log("RETURN TOTAL ITEMS",carrito);
+
+      cartItems = await CartItems.create({
+        cartId: carrito.id,
+        productId: producto.id,
+        quantity: 4
+      })
+
+    })
 
     //LISTAR LOS ITEMS
     it('should return cart items with totals', async () => {
@@ -182,6 +193,13 @@ describe('Cart Routes', () => {
 
       expect(response.body).toHaveProperty('items')
       expect(response.body).toHaveProperty('summary')
+
+      const summary = response.body.summary;
+      const tax = (producto.price * cartItems.quantity) * producto.taxRate;
+
+      expect(summary).toHaveProperty('subtotal', producto.price * cartItems.quantity); // 3.6 * 4
+      expect(summary).toHaveProperty('totalTax', tax);
+      expect(summary).toHaveProperty('total', (producto.price * cartItems.quantity) + tax);
 
     });
 
@@ -203,36 +221,104 @@ describe('Cart Routes', () => {
 
   describe('PUT /cart/:cartId/items/:itemId', () => {
 
+    let cartItems;
+    beforeEach(async () => {
+
+      //carrito = carrito
+      //console.log("RETURN TOTAL ITEMS",carrito);
+
+      cartItems = await CartItems.create({
+        cartId: carrito.id,
+        productId: producto.id,
+        quantity: 4
+      })
+
+    });
+
     //ACTUALIZAR CANTIDAD DE LOS ITEMS
     it('should Updates the quantity of an item in the cart', async () => {
 
-      console.log(carrito);
-      const items = await CartItems.findAll();
-
-      console.log(items);
+      const quantity = 2;
 
       const response = await  request(app)
-          .get(`/api/carts/${carrito.id}/items/${items[0].id}`)
+          .put(`/api/carts/${carrito.id}/items/${cartItems.id}`)
+          .send({
+            quantity: quantity,
+          })
           .expect(200);
 
-      expect(response.body).toHaveProperty('items')
-      expect(response.body).toHaveProperty('summary')
+      expect(response.body).toHaveProperty('id', cartItems.id)
+      expect(response.body).toHaveProperty('quantity', quantity);
+
+    });
+
+    it('should not Updates the quantity of an item in the cart', async () => {
+
+      const quantity = 10;
+
+      const response = await  request(app)
+          .put(`/api/carts/${carrito.id}/items/${cartItems.id}`)
+          .send({
+            quantity: quantity,
+          })
+          .expect(400);
+      console.log(response.body);
+
+      expect(response.body).toHaveProperty('error', "Not enough inventory available")
+
+    });
+
+    it('should not Updates the quantity of an item in the cart - Item not found', async () => {
+
+      const quantity = 10;
+
+      const response = await  request(app)
+          .put(`/api/carts/${carrito.id}/items/123233`)
+          .send({
+            quantity: quantity,
+          })
+          .expect(400);
+      console.log(response.body);
+
+      expect(response.body).toHaveProperty('error', "Item not found")
+
+    });
+
+  });
+
+  describe('DELETE /cart/:cartId/items/:itemId', () => {
+
+    let cartItems;
+
+    beforeEach(async () => {
+
+      cartItems = await CartItems.create({
+        cartId: carrito.id,
+        productId: producto.id,
+        quantity: 4
+      })
+
+    })
+
+    it('should delete items in the cart', async () => {
+
+      const response = await  request(app)
+          .delete(`/api/carts/${carrito.id}/items/${cartItems.id}`)
+          .expect(204);
 
     });
 
 
-    // it('should no return cart items with totals', async () => {
-    //
-    //   const response = await  request(app)
-    //       .get(`/api/carts/ww2/items`)
-    //       .expect(200)
-    //
-    //   console.log(response.body)
-    //
-    //   expect(response.body).toHaveProperty('items')
-    //   expect(response.body).toHaveProperty('summary')
-    //
-    // });
+    it('should not delete items in the cart // NOT FOUND', async () => {
+
+      const response = await  request(app)
+          .delete(`/api/carts/${carrito.id}/items/67676767`)
+          .expect(400);
+
+      expect(response.body).toHaveProperty('error', "Item not found")
+
+    });
+
   });
 
 

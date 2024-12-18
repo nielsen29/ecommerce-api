@@ -36,18 +36,66 @@ describe('Category Routes', () => {
       expect(response.body).toHaveProperty('name', 'Electronics');
       expect(response.body).toHaveProperty('id');
     });
+
+    it('should not create a new category ', async () => {
+      const categoryData = {
+        name: 'Electronics',
+      }
+
+      const response = await request(app)
+          .post('/api/categories')
+          .send({})
+          .expect(400);
+      //console.log(response.body);
+      expect(response.body).toHaveProperty('error', 'notNull Violation: Category.name cannot be null');
+    });
+
   });
 
   describe('GET /api/categories', () => {
-    // beforeEach(async () => {
-    //   await Category.bulkCreate([
-    //     { name: 'Electronics' },
-    //     { name: 'Books' },
-    //     { name: 'Clothing' }
-    //   ]);
-    // });
+
+    let categorias;
+
+    beforeEach(async () => {
+     categorias = await Category.bulkCreate([
+        { name: 'Electronics' },
+        { name: 'Books' },
+        { name: 'Clothing' }
+      ]);
+    });
 
     it('should return all categories', async () => {
+
+      const response = await request(app)
+          .get('/api/categories')
+          .expect(200)
+
+      //console.log(response.body)
+
+      expect(response.body).toHaveLength(3);
+      expect(response.body).toEqual(
+          expect.arrayContaining([
+              expect.objectContaining({name: categorias[0].name}),
+              expect.objectContaining({name: categorias[1].name}),
+              expect.objectContaining({name: categorias[2].name})
+          ])
+      );
+
+    });
+  });
+
+  describe('GET NO DATA /api/categories', () => {
+
+    it('should return empty categories data', async () => {
+
+      const response = await request(app)
+          .get('/api/categories')
+          .expect(200)
+
+      //console.log(response.body)
+
+      expect(response.body).toHaveLength(0);
+
 
     });
   });
