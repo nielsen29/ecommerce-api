@@ -4,7 +4,9 @@ const Product = require('../models/product');
 
 class CartService {
   static async createCart(userId) {
+
     return await Cart.create({ userId });
+
   }
 
   static async addItemToCart(cartId, productId, quantity) {
